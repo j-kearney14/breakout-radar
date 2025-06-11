@@ -1,0 +1,30 @@
+name: daily-snapshot
+on:
+  schedule:
+    - cron: "0 6 * * *"   # 06:00 UTC daily (7 am Irish Summer Time)
+  workflow_dispatch:       # lets you trigger it manually from Actions tab
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - run: pip install -r requirements.txt
+
+      - run: python main.py
+        env:
+          SPOTIPY_CLIENT_ID: ${{ secrets.SPOTIPY_CLIENT_ID }}
+          SPOTIPY_CLIENT_SECRET: ${{ secrets.SPOTIPY_CLIENT_SECRET }}
+
+      - run: python metrics.py
+
+      - run: |
+          git config user.name  "snapshot-bot"
+          git config user.email "bot@github"
+          git add snapshots latest_metrics.csv
+          git commit -m "Daily snapshot $(date -u '+%F')" || echo "no changes"
+          git push
