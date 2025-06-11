@@ -3,6 +3,10 @@ on:
   schedule:
     - cron: "0 6 * * *"   # 06:00 UTC daily (7 am Irish Summer Time)
   workflow_dispatch:       # lets you trigger it manually from Actions tab
+
+permissions:
+contents: write  
+
 jobs:
   build:
     runs-on: ubuntu-latest
