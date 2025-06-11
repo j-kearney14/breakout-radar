@@ -5,7 +5,7 @@ on:
   workflow_dispatch:       # lets you trigger it manually from Actions tab
 
 permissions:
-contents: write  
+  contents: write  
 
 jobs:
   build:
